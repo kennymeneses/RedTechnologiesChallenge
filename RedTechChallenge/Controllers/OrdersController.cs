@@ -69,7 +69,7 @@ namespace RedTechChallenge.Controllers
             {
                 var singleQuery = await _orderManager.SearchById(id);
 
-                if(singleQuery.ResponseStatus.Equals("Error"))
+                if(singleQuery.ResponseStatus == "Error")
                 {
                     return NotFound(singleQuery);
                 }
@@ -98,7 +98,7 @@ namespace RedTechChallenge.Controllers
 
                 var response = await _orderManager.CreateOrder(order);
 
-                if(response.Status.Equals("Error"))
+                if(response.Status == "Error")
                 {
                     return StatusCode(503, response);
                 }

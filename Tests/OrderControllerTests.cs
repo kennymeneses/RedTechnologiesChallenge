@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Inputs;
 using BusinessLogic.Managers;
+using BusinessLogic.Responses;
 using DataAccess;
 using DataAccess.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -61,56 +62,89 @@ namespace Tests
                 CreatedByUsername = "Admin",
                 CreatedDate = DateTime.Now,
             });
+
+            context.SaveChanges();
         }
 
         [Fact]
         public async Task It_ShouldSearchOrders()
         {
             var response = await orderController.GetOrders();
+            var okResponse = response as OkObjectResult;
+
+            Assert.IsType<DataQuery>(okResponse.Value);
+
             Assert.NotNull(response);
         }
+
+
+
 
         [Fact]
         public async Task It_ShouldFindSpecifiedOrder()
         {
             var actionResult = await orderController.GetOrder(GuidExample);
 
-            var okObjectResult = actionResult as ObjectResult;
+            var okObjectResult = actionResult as OkObjectResult;
 
-            Assert.NotNull(okObjectResult.Value);
+            //Assert.NotNull(okObjectResult.Value);
+            Assert.NotNull(okObjectResult);
+            Assert.Equal(200, okObjectResult.StatusCode);
         }
 
 
 
-        //[Fact]
-        //public async Task It_ShouldReturnSomething()
-        //{
-        //    var orderInput = new OrderInput();
-        //    orderInput.Type = "Standard";
-        //    orderInput.CustomerName = "Kenny";
-        //    orderInput.CreatedByUsername = "Admin";
-        //    orderInput.CreatedDate = DateTime.Now;
+        [Fact]
+        public async Task It_ShouldCreateOrderSuccessfully()
+        {
+            var orderInput = new OrderInput();
+            orderInput.Type = "Standard";
+            orderInput.CustomerName = "Kenny";
+            orderInput.CreatedByUsername = "Admin";
+            orderInput.CreatedDate = DateTime.Now;
 
-        //    var response = await orderController.Post(orderInput);
-        //    var a = response.ExecuteResultAsync(context);
+            var response = await orderController.Post(orderInput);
 
-        //    Assert.NotNull(Ok() , );
+            var ObjectResult = response as ObjectResult;
 
-        //    Assert.
-        //}
+            Assert.Equal(201, ObjectResult.StatusCode);
+        }
 
-        //[Fact]
-        //public async Task It_ShouldNotCreateAnInvalidOrder()
-        //{
-        //    var orderInput = new OrderInput();
-        //    orderInput.Type = "SomeType";
-        //    orderInput.CustomerName = "Kenny";
-        //    orderInput.CreatedByUsername = "Admin";
-        //    orderInput.CreatedDate = DateTime.Now;
+        [Fact]
+        public async Task It_ShouldNotCreateAnInvalidOrder()
+        {
+            var orderInput = new OrderInput();
+            orderInput.Type = "SomeType";
+            orderInput.CustomerName = "Kenny";
+            orderInput.CreatedByUsername = "Admin";
+            orderInput.CreatedDate = DateTime.Now;
 
-        //    var response = await orderController.Post(orderInput);            
+            var response = await orderController.Post(orderInput);
 
-        //    Assert.Equal();
-        //}
+            var ObjectResult = response as ObjectResult;
+
+            Assert.NotEqual(201, ObjectResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task It_ShouldUpdateOrderSuccessfully()
+        {
+            var orderInput = new OrderInput();
+
+            orderInput.Type = "ReturnOrder";
+            orderInput.CustomerName = "Kenny";
+            orderInput.CreatedByUsername = "Admin";
+            orderInput.CreatedDate = DateTime.Now;
+
+            var response = await orderController.Put(GuidExample, orderInput);
+            //....
+        }
+
+        [Fact]
+        public async Task It_ShouldRemovedOrderSuccessfully()
+        {
+            var response = await orderController.Delete(GuidExample);
+            //..
+        }
     }
 }
