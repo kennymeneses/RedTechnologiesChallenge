@@ -4,6 +4,7 @@
     <ActiveDebugProfile>RedTechChallenge</ActiveDebugProfile>
     <Controller_SelectedScaffolderID>ApiControllerEmptyScaffolder</Controller_SelectedScaffolderID>
     <Controller_SelectedScaffolderCategoryPath>root/Common/Api</Controller_SelectedScaffolderCategoryPath>
+    <NameOfLastUsedPublishProfile>C:\Users\User\OneDrive\Desktop\proyectos\Backends\Pruebas\RedTech\RedTechChallenge\RedTechChallenge\Properties\PublishProfiles\RedTechDemoApiDemo - Zip Deploy1.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>

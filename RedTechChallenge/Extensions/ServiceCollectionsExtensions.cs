@@ -8,7 +8,7 @@ namespace RedTechChallenge.Extensions
         public static IServiceCollection AddServiceContext(this IServiceCollection services, IConfiguration configuration)
         {
             return services.AddDbContext<DataContext>(options =>
-                            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+                            options.UseSqlServer(configuration.GetConnectionString("AzureConnection")));
         }
     }
 }
