@@ -7,7 +7,8 @@
         public const string StatusError = "Error";
 
         public const string OrderQuerySuccessResult = "The search found order data successfully.";
-        public const string OrderQueryEmptyResult = "No order was found in the search.";
+        public const string OrderQueryEmptyResult = "No order found with that type.";
+        public const string OrderTypeIsInvalid = "The orde type is invalid.";
 
         public const string OrderCreated = "Order was created Successfully.";
         public const string OrderErrorCreation = "Order wasnt created due internal server error.";

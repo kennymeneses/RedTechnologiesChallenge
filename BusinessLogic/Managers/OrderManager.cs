@@ -3,7 +3,6 @@ using BusinessLogic.Responses;
 using DataAccess;
 using DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace BusinessLogic.Managers
@@ -32,6 +31,7 @@ namespace BusinessLogic.Managers
 
                 if(orderList.Count == 0)
                 {
+                    queryResult.ResponseStatus = Constants.StatusOk;
                     queryResult.data = null;
                     queryResult.total = 0;
                     queryResult.ResponseDescription = Constants.OrderQueryEmptyResult;
@@ -39,6 +39,7 @@ namespace BusinessLogic.Managers
                     return queryResult;
                 }
 
+                queryResult.ResponseStatus = Constants.StatusOk;
                 queryResult.data = orderList;
                 queryResult.total = orderList.Count;
                 queryResult.ResponseDescription = Constants.OrderQuerySuccessResult;
@@ -67,27 +68,41 @@ namespace BusinessLogic.Managers
 
             try
             {
-                IQueryable<Order> QueryOrder = _context.Orders.Where(o => o.Type == type);
-                var orderList = QueryOrder.ToList();
-
-                if (orderList.Count == 0)
+                if(IsOrderTypeValid(type))
                 {
-                    queryResult.ResponseStatus = string.Empty;
+                    IQueryable<Order> QueryOrder = _context.Orders.Where(o => o.Type == type);
+                    var orderList = QueryOrder.ToList();
+
+                    if (orderList.Count == 0)
+                    {
+                        queryResult.ResponseStatus = Constants.StatusOk;
+                        queryResult.data = null;
+                        queryResult.total = 0;
+                        queryResult.ResponseDescription = Constants.OrderQueryEmptyResult;
+
+                        return queryResult;
+                    }
+
+                    _logger.LogInformation("OrderList request found {0} orders for type: {1}.", orderList.Count, type);
+
+                    queryResult.ResponseStatus = Constants.StatusOk;
+                    queryResult.data = orderList;
+                    queryResult.total = orderList.Count;
+                    queryResult.ResponseDescription = Constants.OrderQuerySuccessResult;
+
+                    return queryResult;
+                }
+                else
+                {
+                    queryResult.ResponseStatus = Constants.StatusError;
                     queryResult.data = null;
                     queryResult.total = 0;
-                    queryResult.ResponseDescription = Constants.OrderQueryEmptyResult;
+                    queryResult.ResponseDescription = Constants.OrderTypeIsInvalid;
 
                     return queryResult;
                 }
 
-                _logger.LogInformation("OrderList request found {0} orders for type: {1}.", orderList.Count, type);
 
-                queryResult.ResponseStatus = Constants.StatusOk;
-                queryResult.data = orderList;
-                queryResult.total = orderList.Count;
-                queryResult.ResponseDescription = Constants.OrderQuerySuccessResult;
-
-                return queryResult;
             }
             catch (Exception ex)
             {
@@ -208,7 +223,8 @@ namespace BusinessLogic.Managers
 
                     return responseStatus;
                 }
-                
+
+                order.Type = input.Type;
                 order.CustomerName = input.CustomerName;
                 order.CreatedDate = input.CreatedDate;
                 order.CreatedByUsername = input.CreatedByUsername;
@@ -262,7 +278,6 @@ namespace BusinessLogic.Managers
                 responseStatus.ResponseDescription = Constants.OrderRemoved;
 
                 return responseStatus;
-
             }
             catch (Exception ex)
             {

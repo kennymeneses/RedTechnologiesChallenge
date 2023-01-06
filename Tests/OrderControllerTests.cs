@@ -13,6 +13,7 @@ namespace Tests
     public class OrderControllerTests
     {
         string GuidExample = string.Empty;
+        string GuidExample2 = string.Empty;
 
         private readonly DataContext context = DataContextInitializer.GetContext();
         private readonly Mock<ILogger<OrderManager>> mock_manager_logger = new Mock<ILogger<OrderManager>>();
@@ -21,11 +22,12 @@ namespace Tests
         private readonly Mock<ILogger<OrdersController>> mock_logger = new Mock<ILogger<OrdersController>>();
         private readonly Mock<OrderManager> mock_manager = new Mock<OrderManager>();
 
-        OrdersController orderController => new OrdersController(mock_logger.Object, orderManager);
+        OrdersController _orderController => new OrdersController(mock_logger.Object, orderManager);
 
         public OrderControllerTests()
         {
             GuidExample = Guid.NewGuid().ToString();
+            GuidExample2 = Guid.NewGuid().ToString();
 
             context.Orders.Add(new Order()
             {
@@ -38,7 +40,7 @@ namespace Tests
 
             context.Orders.Add(new Order()
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = GuidExample2,
                 Type = "SaleOrder",
                 CustomerName = "Test",
                 CreatedByUsername = "Admin",
@@ -69,7 +71,7 @@ namespace Tests
         [Fact]
         public async Task It_ShouldSearchOrders()
         {
-            var response = await orderController.GetOrders();
+            var response = await _orderController.GetOrders();
             var okResponse = response as OkObjectResult;
 
             Assert.IsType<DataQuery>(okResponse.Value);
@@ -77,22 +79,16 @@ namespace Tests
             Assert.NotNull(response);
         }
 
-
-
-
         [Fact]
         public async Task It_ShouldFindSpecifiedOrder()
         {
-            var actionResult = await orderController.GetOrder(GuidExample);
+            var actionResult = await _orderController.GetOrder(GuidExample);
 
             var okObjectResult = actionResult as OkObjectResult;
 
-            //Assert.NotNull(okObjectResult.Value);
-            Assert.NotNull(okObjectResult);
+            //Assert.IsType<SingleQuery>(okObjectResult.Value);
             Assert.Equal(200, okObjectResult.StatusCode);
         }
-
-
 
         [Fact]
         public async Task It_ShouldCreateOrderSuccessfully()
@@ -103,7 +99,7 @@ namespace Tests
             orderInput.CreatedByUsername = "Admin";
             orderInput.CreatedDate = DateTime.Now;
 
-            var response = await orderController.Post(orderInput);
+            var response = await _orderController.Post(orderInput);
 
             var ObjectResult = response as ObjectResult;
 
@@ -119,11 +115,12 @@ namespace Tests
             orderInput.CreatedByUsername = "Admin";
             orderInput.CreatedDate = DateTime.Now;
 
-            var response = await orderController.Post(orderInput);
+            var response = await _orderController.Post(orderInput);
 
             var ObjectResult = response as ObjectResult;
 
             Assert.NotEqual(201, ObjectResult.StatusCode);
+
         }
 
         [Fact]
@@ -136,14 +133,23 @@ namespace Tests
             orderInput.CreatedByUsername = "Admin";
             orderInput.CreatedDate = DateTime.Now;
 
-            var response = await orderController.Put(GuidExample, orderInput);
+            var response = await _orderController.Put(GuidExample, orderInput);
+
+            var OkObjectResult = response as OkObjectResult;
+
+            Assert.Equal(200, OkObjectResult.StatusCode);
+
             //....
         }
 
         [Fact]
         public async Task It_ShouldRemovedOrderSuccessfully()
         {
-            var response = await orderController.Delete(GuidExample);
+            var response = await _orderController.Delete(GuidExample);
+
+            var OkObjectResult = response as ObjectResult;
+
+            Assert.Equal(202, OkObjectResult.StatusCode);
             //..
         }
     }

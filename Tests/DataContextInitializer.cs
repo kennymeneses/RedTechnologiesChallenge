@@ -13,8 +13,11 @@ namespace Tests
 
             var context = new DataContext(options);
 
-            context.Database.EnsureDeleted();
-            context.Database.EnsureCreated();
+            //context.Database.EnsureDeleted();
+            //context.Database.EnsureCreated();
+            context.Database.EnsureDeletedAsync();
+            context.Database.EnsureCreatedAsync();
+
 
             return context;
         }

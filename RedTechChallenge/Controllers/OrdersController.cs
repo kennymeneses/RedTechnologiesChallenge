@@ -124,7 +124,7 @@ namespace RedTechChallenge.Controllers
 
                 var response = await _orderManager.UpdateOrder(id, order);
 
-                if(response.Status.Equals("Error"))
+                if(response.Status == "Error")
                 {
                     return StatusCode(422, response);
                 }
@@ -147,7 +147,8 @@ namespace RedTechChallenge.Controllers
             try
             {
                 var response = await _orderManager.DeleteOrder(id);
-                if(response.Status.Equals("Error"))
+
+                if(response.Status == "Error")
                 {
                     return StatusCode(500, response);
                 }
